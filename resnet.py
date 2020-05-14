@@ -1,4 +1,3 @@
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -91,6 +90,7 @@ class ResNet(nn.Module):
 
 def ResNet18():
     return ResNet(BasicBlock, [2, 2, 2, 2])
+
 
 def ResNet50():
     return ResNet(Bottleneck, [3, 4, 6, 3])
