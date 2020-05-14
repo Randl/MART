@@ -34,7 +34,7 @@ parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='disables CUDA training')
 parser.add_argument('--epsilon', default=0.031,
                     help='perturbation')
-parser.add_argument('--num-steps', default=10,
+parser.add_argument('--num-steps', type=int, default=10,
                     help='perturb number of steps')
 parser.add_argument('--step-size', default=0.007,
                     help='perturb step size')
@@ -46,6 +46,8 @@ parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 parser.add_argument('--model', default='wideresnet',
                     help='directory of model for saving checkpoint')
+parser.add_argument('--resume', default='',
+                    help='checkpoint to load')
 parser.add_argument('--save-freq', '-s', default=1, type=int, metavar='N',
                     help='save frequency')
 
@@ -167,6 +169,14 @@ def eval_adv_test_whitebox(model, device, test_loader):
 def main():
 
     model = WideResNet().to(device)
+
+    if os.path.exists(args.resume):
+        sd = torch.load(args.resume, map_location=device)
+        sd2 = {}
+        for key in sd:
+            sd2[key.replace('module.','')] = sd[key]
+        model.load_state_dict(sd2)
+        print("Loaded model")
 
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)   
     
